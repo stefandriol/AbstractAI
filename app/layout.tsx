@@ -2,11 +2,11 @@ import { Analytics } from '@vercel/analytics/react';
 import { Metadata } from 'next';
 import '../styles/globals.css';
 
-const title = 'Twitter Bio Generator';
-const description = 'Generate your next Twitter bio in seconds.';
+const title = 'arXiv Summary';
+const description = 'Summarize your arXiv interests.';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://twitterbio.io'),
+  metadataBase: new URL('https://arxiv-summary-2.vercel.app/'),
   title,
   description,
   openGraph: {
@@ -14,11 +14,6 @@ export const metadata: Metadata = {
     description,
     locale: 'en_US',
     type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title,
-    description,
   },
 };
 
