@@ -52,8 +52,8 @@ const papers: Paper[] = [
 
     messages.push({
         role: "user",
-        content: `Summarize the papers in less than 100 characters per relevant paper including the title. Make a double linebreak after each summary. Summarize under the condition that I am interested in ${interest}${
-          interest.slice(-1) === '.' ? '' : '.'}`,
+        content: `Only summarize the papers that are strictly relevant for my interests: ${interest}${
+          interest.slice(-1) === '.' ? '' : '.'} Use less than 200 characters for each summary and include the title. Make a double linebreak after each summary.`,
     });
     
     return messages; 
