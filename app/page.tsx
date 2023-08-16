@@ -5,7 +5,6 @@ import { useRef, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import DropDown, { ArxivCategoryType } from '../components/DropDown';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
 import { useChat } from 'ai/react';
 
 export default function Page() {

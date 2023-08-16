@@ -1,19 +1,21 @@
-const messages = (arxivCategory, interest) => {
+import { ChatCompletionRequestMessageRoleEnum } from 'openai-edge';
 
-    interface Message {
-	role: string;
-	content: string;
-    }
+interface Message {
+    role: ChatCompletionRequestMessageRoleEnum;
+    content: string;
+}
 
-    interface Paper {
-        title: string;
-        abstract: string;
-    }
+interface Paper {
+    title: string;
+    abstract: string;
+}
+
+const getMessages = (arxivCategory: string, interest: string): Message[] => {
 
     const messages: Message[] = [];
 
     messages.push({
-        role: "system",
+        role: ChatCompletionRequestMessageRoleEnum.System,
         content: "You are an assistant to a researcher who wants to stay up to date with the latest papers in their field."
     });
 
@@ -46,12 +48,12 @@ const papers: Paper[] = [
     }]
 
     messages.push({
-    role: "user",
+    role: ChatCompletionRequestMessageRoleEnum.User,
     content: "Paper titles and abstracts to summarize: " + JSON.stringify(papers)
 });
 
     messages.push({
-        role: "user",
+        role: ChatCompletionRequestMessageRoleEnum.User,
         content: `Only summarize the papers that are strictly relevant for my interests: ${interest}${
           interest.slice(-1) === '.' ? '' : '.'} Use less than 200 characters for each summary and include the title. Make a double linebreak after each summary.`,
     });
@@ -59,4 +61,4 @@ const papers: Paper[] = [
     return messages; 
 }
 
-export default messages;
+export default getMessages;
