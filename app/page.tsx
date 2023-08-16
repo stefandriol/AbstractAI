@@ -77,7 +77,7 @@ export default function Page() {
               className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
               type="submit"
             >
-              Generate summary &rarr;
+              Generate summaries &rarr;
             </button>
           )}
           {isLoading && (
