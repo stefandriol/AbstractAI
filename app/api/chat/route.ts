@@ -13,7 +13,7 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   const { arxivCategory, interest } = await req.json();
-  const messages = getMessages(arxivCategory, interest);
+  const messages = await getMessages(arxivCategory, interest);
 
   // Ask OpenAI for a streaming completion given the prompt
   const response = await openai.createChatCompletion({
