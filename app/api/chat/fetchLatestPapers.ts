@@ -36,7 +36,7 @@ export async function fetchLatestPapers(arxivCategory: string): Promise<{ title:
   try {
     console.log(getSubmittedDateRange())
 
-    const response = await fetch(`https://export.arxiv.org/api/query?search_query=submittedDate:[${getSubmittedDateRange()}]+AND+cat:${arxivCategory}`);
+    const response = await fetch(`https://export.arxiv.org/api/query?search_query=submittedDate:[${getSubmittedDateRange()}]+AND+cat:${arxivCategory}&max_results=100`);
     const data = await response.text();
 
     const papers: { title: string; id: string; abstract: string }[] = [];
