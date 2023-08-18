@@ -21,6 +21,7 @@ def scrape_arxiv(url):
     # Extract the first and second <dl> tags
     dl_tags = dlpage.find_all('dl', limit=2)
 
+    # bla
     for dl in dl_tags:
         meta_tags = dl.find_all('div', class_='meta')
 
