@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessageRoleEnum } from 'openai-edge';
-import { fetchLatestPapers } from './fetchLatestPapers';
+import { scrapeLatestPapers } from './scrapeLatestPapers';
 
 interface Message {
     role: ChatCompletionRequestMessageRoleEnum;
@@ -14,7 +14,7 @@ interface Paper {
 
 const getMessages = async (arxivCategory: string, interest: string): Promise<Message[]> => {
 
-    const papers: Paper[] = await fetchLatestPapers(arxivCategory);
+    const papers: Paper[] = await scrapeLatestPapers(arxivCategory);
 
     const messages: Message[] = [];
 
