@@ -2,14 +2,22 @@
 
 import Image from 'next/image';
 import { useRef, useState } from 'react';
-import { Toaster, toast } from 'react-hot-toast';
 import DropDown, { ArxivCategoryType } from '../components/DropDown';
 import Footer from '../components/Footer';
 import { useChat } from 'ai/react';
 
+interface Paper {
+    id: string;
+    title: string;
+    authors: string;
+    abstract: string;
+}
+
 export default function Page() {
   const [interest, setInterest] = useState('');
+  const [interestSubmitted, setInterestSubmitted] = useState('');
   const [arxivCategory, setArxivCategory] = useState<ArxivCategoryType>('hep-th');
+  const [papers, setPapers] = useState<Paper[]>([]);
   const summaryRef = useRef<null | HTMLDivElement>(null);
 
   const scrollToSummary = () => {
@@ -18,8 +26,12 @@ export default function Page() {
     }
   };
 
+  // Set initial input so user can click on submit button without specifying
+  // interests. If initialInput is empty string API call won't be triggered
+  // without changing the input textarea.
   const { input, handleInputChange, handleSubmit, isLoading, messages } =
     useChat({
+      initialInput: 'input not set',
       body: {
         arxivCategory,
         interest,
@@ -29,9 +41,47 @@ export default function Page() {
       },
     });
 
-  const onSubmit = (e: any) => {
-    setInterest(input);
+  const handleTextChange = (e: any) => {
+    handleInputChange(e);
+    setInterest(e.target.value);
+  };
+
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
+
+    setInterestSubmitted(interest);
     handleSubmit(e);
+
+    // Get submitted papers:
+    const response: Response = await fetch(
+	'/api/papers',
+	{
+	    method: 'POST',
+	    body: JSON.stringify({ arxivCategory }),
+	    headers: {
+		'Content-Type': 'application/json',
+	    },
+	}
+    );
+    const responseJson = await response.json();
+    const papersScraped: Paper[] = responseJson.papers;
+    setPapers(papersScraped);
+  };
+
+  const onSummaryClick = (e: any) => {
+    if (!Array.isArray(papers)) {
+        return;
+    }
+    const index = papers.findIndex(item => e.target.outerText.includes(item.title));
+    if (index === -1) {
+        return;
+    }
+    const paper = papers[index];
+    if (!paper || !paper.id || !paper.title) {
+        return;
+    }
+    const url = `https://arxiv.org/abs/${paper.id}`;
+    window.open(url, '_blank');
   };
 
   const lastMessage = messages[messages.length - 1];
@@ -63,8 +113,8 @@ export default function Page() {
             </p>
           </div>
           <textarea
-            value={input}
-            onChange={handleInputChange}
+            value={input === 'input not set' ? '' : input}
+            onChange={handleTextChange}
             rows={4}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
             placeholder={
@@ -93,11 +143,6 @@ export default function Page() {
             </button>
           )}
         </form>
-        <Toaster
-          position="top-center"
-          reverseOrder={false}
-          toastOptions={{ duration: 2000 }}
-        />
         <hr className="h-px bg-gray-700 border-1 dark:bg-gray-700" />
         <output className="space-y-10 my-10">
           {generatedSummaries && (
@@ -111,21 +156,19 @@ export default function Page() {
                 </h2>
               </div>
               <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
+                {interestSubmitted && (<p>{`Research topics you're interested in: ${interestSubmitted}`}</p>)}
                 {generatedSummaries
-                  .split('\n\n')
+                  .split(/\n\n/)
                   .map((generatedSummary) => {
                     return (
                       <div
-                        className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
-                        onClick={() => {
-                          navigator.clipboard.writeText(generatedSummary);
-                          toast('Summary copied to clipboard', {
-                            icon: '✂️',
-                          });
-                        }}
+                        className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-pointer border"
+                        onClick={onSummaryClick}
                         key={generatedSummary}
                       >
-                        <p>{generatedSummary}</p>
+                        <p className="whitespace-pre-line">
+                          {generatedSummary}
+                        </p>
                       </div>
                     );
                   })}
