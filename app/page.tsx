@@ -92,7 +92,7 @@ export default function Page() {
         <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
             <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
                 <h1 className="sm:text-5xl text-3xl max-w-[708px] font-bold text-slate-900 mb-10">
-                    Tired of scrolling arXiv? Get an AI summary of today's
+                    Tired of scrolling arXiv? Get an AI summary of today&apos;s
                     papers.
                 </h1>
                 <form className="max-w-xl w-full" onSubmit={onSubmit}>
@@ -121,7 +121,7 @@ export default function Page() {
                             alt="2 icon"
                         />
                         <p className="text-left font-medium">
-                            Research topics you're intersted in.
+                            Research topics you&apos;re intersted in.
                         </p>
                     </div>
                     <textarea
