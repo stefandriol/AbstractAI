@@ -6,28 +6,28 @@ const title = 'arXiv Summary';
 const description = 'Summarize your arXiv interests.';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://arxiv-summary-2.vercel.app/'),
-  title,
-  description,
-  openGraph: {
+    metadataBase: new URL('https://arxiv-summary-2.vercel.app/'),
     title,
     description,
-    locale: 'en_US',
-    type: 'website',
-  },
+    openGraph: {
+        title,
+        description,
+        locale: 'en_US',
+        type: 'website',
+    },
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body>
+                {children}
+                <Analytics />
+            </body>
+        </html>
+    );
 }

@@ -1,0 +1,11 @@
+{
+  "extends": ["next"],
+  "rules": {
+    "indent": ["error", 4],
+    "react/jsx-indent": ["error", 4],
+    "react/jsx-indent-props": ["error", 4],
+    "camelcase": "off",
+    "no-plusplus": "off",
+    "react/prop-types": "off"
+  }
+}
