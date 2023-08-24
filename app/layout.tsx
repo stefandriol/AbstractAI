@@ -2,11 +2,11 @@ import { Analytics } from '@vercel/analytics/react';
 import { Metadata } from 'next';
 import '../styles/globals.css';
 
-const title = 'arXiv Summary';
-const description = 'Summarize your arXiv interests.';
+const title = 'Abstract AI';
+const description = 'AI summaries of arXiv papers.';
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://arxiv-summary-2.vercel.app/'),
+    metadataBase: new URL('https://www.abstractai.org/'),
     title,
     description,
     openGraph: {
