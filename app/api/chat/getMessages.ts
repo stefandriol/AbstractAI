@@ -23,20 +23,26 @@ const getMessages = async (
     arxivCategory: string,
     interest: string,
 ): Promise<Message[]> => {
-    // Restrict to first 10 papers because of token size. Don't feed id to GPT.
+    // Restrict to first X papers because of token size. Don't feed id to GPT.
     const papers = await scrapeLatestPapers(arxivCategory);
+    // debugging order:
+    // console.log("Original papers order:", papers);
     const papersForPrompt: PaperForPrompt[] = papers
-        .slice(0, 10)
+        .slice(0, 20)
         .map(({ id, ...rest }) => rest);
+    // debugging order again:
+    // console.log("Modified papers order:", papersForPrompt);
 
     const messages: Message[] = [];
 
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.System,
         content:
-            'Join the academic community in summarising new high energy physics papers.',
+            'Join the academic community in summarizing the new findings in high energy physics.',
     });
 
+    // probably superfluous
+    /*
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
         content:
@@ -48,21 +54,22 @@ const getMessages = async (
         content:
             '"Deeply-virtual and photoproduction of mesons at higher-order and  higher-twist"\nSummary: Deeply-virtual and photoproduction of mesons provide access to generalized parton distributions. Higher-order contributions stabilize renormalization scales, while higher-twist effects are important for pseudo-scalar meson production.\nkeywords: deeply-virtual, photoproduction, mesons.',
     });
+    */
 
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
-        content: 'Papers to summarize: ' + JSON.stringify(papersForPrompt),
+        content: 'Summarize these papers by following the instructions below:' + JSON.stringify(papersForPrompt),
     });
 
     const interestPrompt: string = interest
-        ? `Only summarize the papers that are strictly relevant for my interests: ${interest}${
+        ? `Only consider the papers that are strictly relevant for my interests: ${interest}${
             interest.slice(-1) === '.' ? ' ' : '. '
         }`
         : '';
 
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
-        content: `${interestPrompt}Extract the core results and summarize them in 100 to 250 characters, but no less, no more. Identify 3 most relevant technical keywords. You MUST end each summary with a double line break. Include a paragraph for each of these categories per summary: title, authors, summary and separate them with a single line break.`,
+            content: `${interestPrompt}For each paper, extract its core result in 200 characters AND NOT MORE!!! Also, identify the 3 most relevant technical keywords. Each paper must yield 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.`,
     });
 
     return messages;

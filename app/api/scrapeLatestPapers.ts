@@ -63,7 +63,7 @@ export async function scrapeLatestPapers(
 
         return papers;
     } catch (error) {
-        console.error('Error sraping arXiv data:', error);
+        console.error('Error scraping arXiv data:', error);
 
         return [];
     }

@@ -20,10 +20,10 @@ export async function POST(req: Request) {
         model: 'gpt-3.5-turbo-16k-0613',
         stream: true,
         temperature: 1,
-        max_tokens: 12124,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
+        max_tokens: 6000,
+        top_p: 0.5,                // Narrow down token probabilities a bit.
+        frequency_penalty: 0,   // Prefer less common words/phrases.
+        presence_penalty: 0.5,    // Encourage the use of diverse vocabulary.
         messages: messages.map((message) => ({
             role: message.role,
             content: message.content,
