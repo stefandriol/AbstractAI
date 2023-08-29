@@ -58,18 +58,20 @@ const getMessages = async (
 
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
-        content: 'Summarize these papers by following the instructions below:' + JSON.stringify(papersForPrompt),
+        content:
+            'Summarize these papers by following the instructions below:' +
+            JSON.stringify(papersForPrompt),
     });
 
     const interestPrompt: string = interest
         ? `Only consider the papers that are strictly relevant for my interests: ${interest}${
-            interest.slice(-1) === '.' ? ' ' : '. '
-        }`
+              interest.slice(-1) === '.' ? ' ' : '. '
+          }`
         : '';
 
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
-            content: `${interestPrompt}For each paper, extract its core result in 200 characters AND NOT MORE!!! Also, identify the 3 most relevant technical keywords. Each paper must yield 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.`,
+        content: `${interestPrompt}For each paper, extract its core result in 200 characters AND NOT MORE!!! Also, identify the 3 most relevant technical keywords. Each paper must yield 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.`,
     });
 
     return messages;

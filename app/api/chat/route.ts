@@ -21,9 +21,9 @@ export async function POST(req: Request) {
         stream: true,
         temperature: 1,
         max_tokens: 6000,
-        top_p: 0.5,                // Narrow down token probabilities a bit.
-        frequency_penalty: 0,   // Prefer less common words/phrases.
-        presence_penalty: 0.5,    // Encourage the use of diverse vocabulary.
+        top_p: 0.5, // Narrow down token probabilities a bit.
+        frequency_penalty: 0, // Prefer less common words/phrases.
+        presence_penalty: 0.5, // Encourage the use of diverse vocabulary.
         messages: messages.map((message) => ({
             role: message.role,
             content: message.content,
