@@ -182,10 +182,14 @@ export default function Page() {
                                             >
                                                 {generatedSummary
                                                     .split(/\n/)
-                                                    .map((paragraph) => {
+                                                    .map((paragraph, index) => {
+                                                        let paragraphClass = "whitespace-pre-line";
+                                                        if (index === 0) paragraphClass += " font-bold";
+                                                        if (index === 1) paragraphClass += " italic";
+
                                                         return (
                                                             <>
-                                                                <p className="whitespace-pre-line">
+                                                                <p className={paragraphClass}>
                                                                     {paragraph}
                                                                 </p>
                                                                 <br className="mb-10" />

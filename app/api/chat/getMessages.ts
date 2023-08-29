@@ -38,7 +38,7 @@ const getMessages = async (
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.System,
         content:
-            'Join the academic community in summarizing the new findings in high energy physics.',
+            'Join the academic community in summarizing new findings in high energy physics.',
     });
 
     // probably superfluous
@@ -69,9 +69,14 @@ const getMessages = async (
           }`
         : '';
 
-    messages.push({
+     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
-        content: `${interestPrompt}For each paper, extract its core result in 200 characters AND NOT MORE!!! Also, identify the 3 most relevant technical keywords. Each paper must yield 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.`,
+        content: `${interestPrompt}For each paper, extract its core result within 200 characters AND NO MORE! Also, identify its 3 most relevant technical keywords.`,
+    });
+
+        messages.push({
+        role: ChatCompletionRequestMessageRoleEnum.User,
+        content: `For each paper, format the output using 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.`,
     });
 
     return messages;
