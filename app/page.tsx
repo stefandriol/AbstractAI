@@ -180,9 +180,18 @@ export default function Page() {
                                                 onClick={onSummaryClick}
                                                 key={generatedSummary}
                                             >
-                                                <p className="whitespace-pre-line">
-                                                    {generatedSummary}
-                                                </p>
+                                                {generatedSummary
+                                                    .split(/\n/)
+                                                    .map((paragraph) => {
+                                                        return (
+                                                            <>
+                                                                <p className="whitespace-pre-line">
+                                                                    {paragraph}
+                                                                </p>
+                                                                <br className="mb-10" />
+                                                            </>
+                                                        );
+                                                    })}
                                             </div>
                                         );
                                     })}
