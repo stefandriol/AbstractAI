@@ -67,20 +67,49 @@ export default function Page() {
     };
 
     const onSummaryClick = (e: any) => {
+        console.log('Click event:', e);
+
         if (!Array.isArray(papers)) {
+            // console.log('papers is not an array!');
             return;
         }
+
+        // Get the closest parent div of the clicked element
+        const summaryDiv = e.target.closest('div');
+
+        if (!summaryDiv) {
+            console.log('Summary div not found.');
+            return;
+        }
+
+        // Get all the text content from the summary div
+        const summaryText = summaryDiv.textContent || '';
+
+        // Log the summary text and titles of all papers to check for any formatting issues or special characters.
+        console.log('Summary text:', summaryText);
+        console.log('Papers titles:', papers.map(p => p.title));
+
+        // Find the paper based on the summary div's text content
         const index = papers.findIndex((item) =>
-            e.target.outerText.includes(item.title),
+            summaryText.includes(item.title),
         );
+        console.log('Found index:', index);
+
+        // Step 2: If the index is not found, try comparing trimmed versions of summary text and paper titles to avoid issues due to extra spaces or line breaks.
         if (index === -1) {
-            return;
+            const indexTrimmed = papers.findIndex((paper) => summaryText.trim().includes(paper.title.trim()));
+            console.log('Found index with trimmed comparison:', indexTrimmed);
         }
+
         const paper = papers[index];
+        console.log('Found paper:', paper);
+
         if (!paper || !paper.id || !paper.title) {
+            console.log('Paper data is not valid.');
             return;
         }
         const url = `https://arxiv.org/abs/${paper.id}`;
+        console.log('Opening URL:', url);
         window.open(url, '_blank');
     };
 

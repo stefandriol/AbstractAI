@@ -75,10 +75,15 @@ const getMessages = async (
         content: `${interestPrompt}For each paper, extract its core result within 200 characters AND NO MORE! Also, identify its 3 most relevant technical keywords.`,
     });
 
-        messages.push({
+     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
         content: `For each paper, format the output using 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break. 
         Namely: insert_title_here\ninsert_authors_here\ninsert_summary_here\nkeywords:insert_keywords_here\n\n`,
+    });
+
+    messages.push({
+        role: ChatCompletionRequestMessageRoleEnum.User,
+        content: `Do not change any character in the titles provided.`,
     });
 
         /*
