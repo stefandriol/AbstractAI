@@ -25,13 +25,13 @@ export async function POST(req: Request) {
 
     // Create StreamingTextResponse from database hash if existent:
     const hash = `${todayUTC}${arxivCategory}${interest}`;
-    let hashMessages: HashMessagesType;
+    let hashMessages: HashMessagesType | null = null;
     hashMessages = await kv.hget(hash, 'messages');
     if (hashMessages && hashMessages.hasOwnProperty('content')) {
         const mockStream = new ReadableStream({
             start(controller) {
                 const utf8Encoder = new TextEncoder();
-                const encoded = utf8Encoder.encode(hashMessages.content);
+                const encoded = utf8Encoder.encode(hashMessages?.content);
                 controller.enqueue(encoded);
                 controller.close();
             },
