@@ -4,6 +4,11 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 import getMessages from './getMessages';
 import { NextResponse } from 'next/server';
 
+interface HashMessagesType {
+    content: string;
+    role: string;
+}
+
 // Create an OpenAI API client (that's edge friendly!)
 const config = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -20,7 +25,8 @@ export async function POST(req: Request) {
 
     // Create StreamingTextResponse from database hash if existent:
     const hash = `${todayUTC}${arxivCategory}${interest}`;
-    const hashMessages = await kv.hget(hash, 'messages');
+    let hashMessages: HashMessagesType;
+    hashMessages = await kv.hget(hash, 'messages');
     if (hashMessages && hashMessages.hasOwnProperty('content')) {
         const mockStream = new ReadableStream({
             start(controller) {
