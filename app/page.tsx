@@ -30,17 +30,27 @@ export default function Page() {
     // Set initial input so user can click on submit button without specifying
     // interests. If initialInput is empty string API call won't be triggered
     // without changing the input textarea.
-    const { input, handleInputChange, handleSubmit, isLoading, messages } =
-        useChat({
-            initialInput: 'input not set',
-            body: {
-                arxivCategory,
-                interest,
-            },
-            onResponse() {
-                scrollToSummary();
-            },
-        });
+    const dummyInput = 'input not set';
+    const {
+        input,
+        setInput,
+        handleInputChange,
+        handleSubmit,
+        isLoading,
+        messages,
+    } = useChat({
+        initialInput: dummyInput,
+        body: {
+            arxivCategory,
+            interest,
+        },
+        onResponse() {
+            scrollToSummary();
+        },
+        onFinish() {
+            setInput(dummyInput);
+        },
+    });
 
     const handleTextChange = (e: any) => {
         handleInputChange(e);
