@@ -151,7 +151,7 @@ export default function Page() {
                             alt="2 icon"
                         />
                         <p className="text-left font-medium">
-                            Research topics you&apos;re intersted in.
+                            (optional) Research topics you&apos;re intersted in.
                         </p>
                     </div>
                     <textarea
