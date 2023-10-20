@@ -127,12 +127,12 @@ export default function Page() {
                 </h1>
                 <form className="max-w-xl w-full" onSubmit={onSubmit}>
                     <div className="flex mb-5 items-center space-x-3">
-                        <Image
+                        {/*<Image
                             src="/1-black.png"
                             width={30}
                             height={30}
                             alt="1 icon"
-                        />
+                        />*/}
                         <p className="text-left font-medium">Select arXiv.</p>
                     </div>
                     <div className="block">
@@ -143,7 +143,7 @@ export default function Page() {
                             }
                         />
                     </div>
-                    <div className="flex mt-10 items-center space-x-3">
+                    {/*<div className="flex mt-10 items-center space-x-3">
                         <Image
                             src="/2-black.png"
                             width={30}
@@ -153,7 +153,7 @@ export default function Page() {
                         <p className="text-left font-medium">
                             (optional) Research topics you&apos;re intersted in.
                         </p>
-                    </div>
+                    </div>*/}
                     <textarea
                         value={input === 'input not set' ? '' : input}
                         onChange={handleTextChange}
