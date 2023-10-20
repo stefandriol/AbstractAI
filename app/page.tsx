@@ -153,7 +153,7 @@ export default function Page() {
                         <p className="text-left font-medium">
                             (optional) Research topics you&apos;re intersted in.
                         </p>
-                    </div>*/}
+                    </div>
                     <textarea
                         value={input === 'input not set' ? '' : input}
                         onChange={handleTextChange}
@@ -162,7 +162,7 @@ export default function Page() {
                         placeholder={
                             'e.g. String Phenomenology, Axions, Collider physics.'
                         }
-                    />
+                    />*/}
 
                     {!isLoading && (
                         <button
