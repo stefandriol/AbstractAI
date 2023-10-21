@@ -28,7 +28,7 @@ const getMessages = async (
     // debugging order:
     // console.log("Original papers order:", papers);
     const papersForPrompt: PaperForPrompt[] = papers
-        .slice(0, 20)
+        .slice(0, 30)
         .map(({ id, ...rest }) => rest);
     // debugging order again:
     //console.log("Modified papers order:", papersForPrompt);
@@ -42,21 +42,6 @@ const getMessages = async (
             'Join the academic community in summarizing new findings in high energy physics.',
     });
 
-    // probably superfluous
-    /*
-    messages.push({
-        role: ChatCompletionRequestMessageRoleEnum.User,
-        content:
-            "\n\ntitle: Deeply-virtual and photoproduction of mesons at higher-order and  higher-twist\nauthors: K. Passek-Kumericki\nabstract: Both deeply-virtual and photoproduction of mesons offer promising access to\ngeneralized parton distributions and complementary description of different\nkinematical regions. The higher-order contributions offer stabilizing effect\nwith respect to the dependence on renormalization scales, while higher-twist\neffects have been identified as especially important in the case of the\nproduction of pseudo-scalar mesons. This was confirmed by recent evaluation of\nthe complete twist-3 contribution to $\\pi$ and $\\eta$/$\\eta'$ photoproduction\nand its confrontation with experimental data.\n",
-    });
-
-    messages.push({
-        role: ChatCompletionRequestMessageRoleEnum.Assistant,
-        content:
-            '"Deeply-virtual and photoproduction of mesons at higher-order and  higher-twist"\nSummary: Deeply-virtual and photoproduction of mesons provide access to generalized parton distributions. Higher-order contributions stabilize renormalization scales, while higher-twist effects are important for pseudo-scalar meson production.\nkeywords: deeply-virtual, photoproduction, mesons.',
-    });
-    */
-
     messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
         content:
@@ -64,27 +49,35 @@ const getMessages = async (
             JSON.stringify(papersForPrompt),
     });
 
-    const interestPrompt: string = interest
-        ? `Only consider the papers that are strictly relevant for my interests: ${interest}${
-              interest.slice(-1) === '.' ? ' ' : '. '
-          }`
-        : '';
+    // const interestPrompt: string = interest
+    //    ? `Only consider the papers that are strictly relevant for my interests: ${interest}${
+    //          interest.slice(-1) === '.' ? ' ' : '. '
+    //      }`
+    //    : '';
 
      messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
-        content: `${interestPrompt}For each paper, extract its core result within 200 characters AND NO MORE! Also, identify its 3 most relevant technical keywords.`,
+        // content: `$Instructions: {interestPrompt}For each paper:
+        content: `$Instructions: For each paper:
+        1. Summary: extract its core result within 250 characters and NO MORE (use LaTeX math mode where necessary);
+        2. Keywords: identify its 3 most relevant technical keywords;
+        3. Output format #1: format the output using 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.
+        Namely: insert_title_here\ninsert_authors_here\ninsert_summary_here\nkeywords:insert_keywords_here\n\n ;
+        4. Output format #2: do not modify any character in the titles provided.
+        `,
     });
 
-     messages.push({
-        role: ChatCompletionRequestMessageRoleEnum.User,
-        content: `For each paper, format the output using 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break. 
-        Namely: insert_title_here\ninsert_authors_here\ninsert_summary_here\nkeywords:insert_keywords_here\n\n`,
-    });
+     // messages.push({
+     //   role: ChatCompletionRequestMessageRoleEnum.User,
+     //   content: `For each paper, format the output using 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.
+     //   Namely: insert_title_here\ninsert_authors_here\ninsert_summary_here\nkeywords:insert_keywords_here\n\n`,
+    // });
 
-    messages.push({
-        role: ChatCompletionRequestMessageRoleEnum.User,
-        content: `Do not change any character in the titles provided.`,
-    });
+    // When implementing Mathjax, need to keep LaTex structure in title and summary
+    // messages.push({
+    //    role: ChatCompletionRequestMessageRoleEnum.User,
+    //    content: `Do not change any character in the titles provided.`,
+    // });
 
         /*
         messages.push({

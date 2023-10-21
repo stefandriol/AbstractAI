@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     const hash = `${todayUTC}${arxivCategory}${interest}`;
     let hashMessages: HashMessagesType | null = null;
     hashMessages = await kv.hget(hash, 'messages');
+    // hashMessages = null // to check summaries without saving them in database
     if (hashMessages && hashMessages.hasOwnProperty('content')) {
         const mockStream = new ReadableStream({
             start(controller) {
@@ -41,13 +42,14 @@ export async function POST(req: Request) {
 
     // Ask OpenAI for a streaming completion given the prompt
     const response = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo-16k-0613',
+        // model: 'gpt-3.5-turbo-16k-0613',
+        model: 'gpt-4', // or gpt-4-32k
         stream: true,
-        temperature: 1,
-        max_tokens: 6000,
-        top_p: 0.5, // Narrow down token probabilities a bit.
-        frequency_penalty: 0, // Prefer less common words/phrases.
-        presence_penalty: 0.5, // Encourage the use of diverse vocabulary.
+        temperature: 0.8, // Randomness [0-2]: 0 = deterministic, 2 = insane
+        max_tokens: 4000, // Output tokens: 4/5000 for 8k model, 20-25k for 32k model
+        top_p: 0.5, // Diversity [0-1]: Narrow down token probabilities a bit.
+        frequency_penalty: 0, // [0-2]: Preference for new (less common) words/phrases.
+        presence_penalty: 0.5, // [0-2]: Penalty for new tokens that do not appear in text.
         messages: messages.map((message) => ({
             role: message.role,
             content: message.content,
