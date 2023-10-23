@@ -17,6 +17,9 @@ dependencies:
   '@tailwindcss/forms':
     specifier: ^0.5.6
     version: 0.5.6(tailwindcss@3.3.3)
+  '@types/mathjax':
+    specifier: ^0.0.39
+    version: 0.0.39
   '@vercel/analytics':
     specifier: ^0.1.11
     version: 0.1.11(react@18.2.0)
@@ -382,6 +385,10 @@ packages:
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
+
+  /@types/mathjax@0.0.39:
+    resolution: {integrity: sha512-2bT/0HsPl/CR+tT6U/I/+n0HaaJelZ6sbjG/XbBe3UDhG8cOHFihpnUq9/Yt1Gf0RWbBqc+lUMoiNAZi1LnRTA==}
+    dev: false
 
   /@types/node@18.11.3:
     resolution: {integrity: sha512-fNjDQzzOsZeKZu5NATgXUPsaFaTxeRgFXoosrHivTl8RGeV733OLawXsGfEk9a8/tySyZUyiZ6E8LcjPFZ2y1A==}

@@ -21,7 +21,8 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
     const { arxivCategory, interest } = await req.json();
-    const messages = await getMessages(arxivCategory, interest);
+
+    let messages = await getMessages(arxivCategory, interest, 30);
 
     // Create StreamingTextResponse from database hash if existent:
     const hash = `${todayUTC}${arxivCategory}${interest}`;
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
     }
 
     // Ask OpenAI for a streaming completion given the prompt
-    const response = await openai.createChatCompletion({
+    let response = await openai.createChatCompletion({
         // model: 'gpt-3.5-turbo-16k-0613',
         model: 'gpt-4', // or gpt-4-32k
         stream: true,
@@ -55,6 +56,28 @@ export async function POST(req: Request) {
             content: message.content,
         })),
     });
+
+    // Messages were too many tokens (has to be less than 8k for GPT):
+    if (!response.ok) {
+        // Wait due to rate limiting of OpenAI API. Needs to be more than a
+        // minute.
+        await new Promise((r) => setTimeout(r, 61000));
+        messages = await getMessages(arxivCategory, interest, 10);
+        response = await openai.createChatCompletion({
+            // model: 'gpt-3.5-turbo-16k-0613',
+            model: 'gpt-4', // or gpt-4-32k
+            stream: true,
+            temperature: 0.8, // Randomness [0-2]: 0 = deterministic, 2 = insane
+            max_tokens: 4000, // Output tokens: 4/5000 for 8k model, 20-25k for 32k model
+            top_p: 0.5, // Diversity [0-1]: Narrow down token probabilities a bit.
+            frequency_penalty: 0, // [0-2]: Preference for new (less common) words/phrases.
+            presence_penalty: 0.5, // [0-2]: Penalty for new tokens that do not appear in text.
+            messages: messages.map((message) => ({
+                role: message.role,
+                content: message.content,
+            })),
+        });
+    }
 
     // Store response in kv database so call has to be executed only once:
     const stream = OpenAIStream(response, {

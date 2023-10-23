@@ -22,13 +22,14 @@ interface PaperForPrompt {
 const getMessages = async (
     arxivCategory: string,
     interest: string,
+    nPapers: number,
 ): Promise<Message[]> => {
     // Restrict to first X papers because of token size. Don't feed id to GPT.
     const papers = await scrapeLatestPapers(arxivCategory);
     // debugging order:
     // console.log("Original papers order:", papers);
     const papersForPrompt: PaperForPrompt[] = papers
-        .slice(0, 30)
+        .slice(0, nPapers)
         .map(({ id, ...rest }) => rest);
     // debugging order again:
     //console.log("Modified papers order:", papersForPrompt);
@@ -55,7 +56,7 @@ const getMessages = async (
     //      }`
     //    : '';
 
-     messages.push({
+    messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
         // content: `$Instructions: {interestPrompt}For each paper:
         content: `$Instructions: For each paper:
@@ -67,10 +68,10 @@ const getMessages = async (
         `,
     });
 
-     // messages.push({
-     //   role: ChatCompletionRequestMessageRoleEnum.User,
-     //   content: `For each paper, format the output using 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.
-     //   Namely: insert_title_here\ninsert_authors_here\ninsert_summary_here\nkeywords:insert_keywords_here\n\n`,
+    // messages.push({
+    //   role: ChatCompletionRequestMessageRoleEnum.User,
+    //   content: `For each paper, format the output using 4 paragraphs separated by a single line break: title, authors, summary, keywords. Split papers by a double line break.
+    //   Namely: insert_title_here\ninsert_authors_here\ninsert_summary_here\nkeywords:insert_keywords_here\n\n`,
     // });
 
     // When implementing Mathjax, need to keep LaTex structure in title and summary
@@ -79,7 +80,7 @@ const getMessages = async (
     //    content: `Do not change any character in the titles provided.`,
     // });
 
-        /*
+    /*
         messages.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
         content: `For example, given the paper: 
