@@ -1,8 +1,21 @@
 import cheerio from 'cheerio';
 
+export interface Paper {
+    id: string;
+    title: string;
+    authors: string;
+    abstract: string;
+}
+
+export interface ScrapeResult {
+    papers: Paper[];
+    nPapersGptFed: number;
+    nPapersTotal: number;
+}
+
 export async function scrapeLatestPapers(
     arxivCategory: string,
-): Promise<{ id: string; title: string; authors: string; abstract: string }[]> {
+): Promise<ScrapeResult> {
     try {
         const response = await fetch(
             `https://arxiv.org/list/${arxivCategory}/new`,
@@ -16,6 +29,8 @@ export async function scrapeLatestPapers(
             authors: string;
             abstract: string;
         }[] = [];
+        let nPapersGptFed: number = 0;
+        let nPapersTotal: number = 0;
 
         // Find the <h3> tag that includes the string "Cross-lists":
         const crossListsHeading = $('h3:contains("Cross-lists")');
@@ -59,12 +74,25 @@ export async function scrapeLatestPapers(
                 authors: authors,
                 abstract: abstract,
             });
+
+            // Use character count / 4 as rough estimate for token count for
+            // GPT-4. Once we're using more than 4k token for the prompt we're
+            // likely going to exceed GPT-4's 8k token limit, hence cut off
+            // paper count here.
+            nPapersTotal = nPapersTotal + 1;
+            if (JSON.stringify(papers).length / 4 < 4000) {
+                nPapersGptFed = nPapersGptFed + 1;
+            }
         });
 
-        return papers;
+        return {
+            papers: papers,
+            nPapersGptFed: nPapersGptFed,
+            nPapersTotal: nPapersTotal,
+        };
     } catch (error) {
         console.error('Error scraping arXiv data:', error);
 
-        return [];
+        return { papers: [], nPapersGptFed: 0, nPapersTotal: 0 };
     }
 }

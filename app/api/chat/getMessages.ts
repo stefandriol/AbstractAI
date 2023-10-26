@@ -1,16 +1,9 @@
 import { ChatCompletionRequestMessageRoleEnum } from 'openai-edge';
-import { scrapeLatestPapers } from '../scrapeLatestPapers';
+import { scrapeLatestPapers, Paper, ScrapeResult } from '../scrapeLatestPapers';
 
 interface Message {
     role: ChatCompletionRequestMessageRoleEnum;
     content: string;
-}
-
-interface Paper {
-    id: string;
-    title: string;
-    authors: string;
-    abstract: string;
 }
 
 interface PaperForPrompt {
@@ -22,18 +15,14 @@ interface PaperForPrompt {
 const getMessages = async (
     arxivCategory: string,
     interest: string,
-    nPapers: number,
 ): Promise<Message[]> => {
     // Restrict to first X papers because of token size. Don't feed id to GPT.
-    const papers = await scrapeLatestPapers(arxivCategory);
-    // debugging order:
-    // console.log("Original papers order:", papers);
+    const scrapeResult: ScrapeResult = await scrapeLatestPapers(arxivCategory);
+    const papers: Paper[] = scrapeResult.papers;
+    const nPapers: number = scrapeResult.nPapersGptFed;
     const papersForPrompt: PaperForPrompt[] = papers
         .slice(0, nPapers)
         .map(({ id, ...rest }) => rest);
-    // debugging order again:
-    //console.log("Modified papers order:", papersForPrompt);
-    //console.log("Modified papers stringified:", JSON.stringify(papersForPrompt));
 
     const messages: Message[] = [];
 

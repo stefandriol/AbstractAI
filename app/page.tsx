@@ -5,13 +5,7 @@ import { useRef, useState } from 'react';
 import DropDown, { ArxivCategoryType } from '../components/DropDown';
 import { useChat } from 'ai/react';
 import Footer from '../components/Footer';
-
-interface Paper {
-    id: string;
-    title: string;
-    authors: string;
-    abstract: string;
-}
+import { Paper, ScrapeResult } from './api/scrapeLatestPapers';
 
 export default function Page() {
     const [interest, setInterest] = useState('');
@@ -19,6 +13,8 @@ export default function Page() {
     const [arxivCategory, setArxivCategory] =
         useState<ArxivCategoryType>('hep-th');
     const [papers, setPapers] = useState<Paper[]>([]);
+    const [nPapersTotal, setNPapersTotal] = useState(0);
+    const [nPapersGptFed, setNPapersGptFed] = useState(0);
     const summaryRef = useRef<null | HTMLDivElement>(null);
 
     const scrollToSummary = () => {
@@ -72,8 +68,13 @@ export default function Page() {
             },
         });
         const responseJson = await response.json();
-        const papersScraped: Paper[] = responseJson.papers;
+        const scrapeResult: ScrapeResult = responseJson.scrapeResult;
+        const papersScraped: Paper[] = scrapeResult.papers;
+        const nPapersTotalScraped: number = scrapeResult.nPapersTotal;
+        const nPapersGptFedScraped: number = scrapeResult.nPapersGptFed;
         setPapers(papersScraped);
+        setNPapersTotal(nPapersTotalScraped);
+        setNPapersGptFed(nPapersGptFedScraped);
     };
 
     const onSummaryClick = (e: any) => {
@@ -200,6 +201,9 @@ export default function Page() {
                             <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
                                 {interestSubmitted && (
                                     <p>{`Research topics you're interested in: ${interestSubmitted}`}</p>
+                                )}
+                                {nPapersTotal !== nPapersGptFed && (
+                                    <p>{`Summaries are restricted to the first ${nPapersGptFed} out of ${nPapersTotal} total papers in this category. This restriction is due to GPT-4 input size limitations.`}</p>
                                 )}
                                 {generatedSummaries
                                     .split(/\n\n/)
