@@ -4,6 +4,8 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 import getMessages from './getMessages';
 import { NextResponse } from 'next/server';
 
+const { DateTime } = require('luxon');
+
 interface HashMessagesType {
     content: string;
     role: string;
@@ -14,7 +16,15 @@ const config = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(config);
-const todayUTC = new Date().toISOString().slice(0, 10);
+
+// arXiv publishes at 8 pm East coast time (not necessarily EST depending on
+// daylight saving). If before 8 pm East coast time use current day, otherwise
+// next day.
+const nowEastern = DateTime.now().setZone("America/New_York");
+let today = nowEastern.toFormat("yyyy-MM-dd");
+if (nowEastern.hour >= 20) {
+    today = nowEastern.plus({ days: 1 }).toFormat("yyyy-MM-dd");
+}
 
 // Set the runtime to edge for best performance
 export const runtime = 'edge';
@@ -25,7 +35,7 @@ export async function POST(req: Request) {
     let messages = await getMessages(arxivCategory, interest);
 
     // Create StreamingTextResponse from database hash if existent:
-    const hash = `${todayUTC}${arxivCategory}${interest}`;
+    const hash = `${today}${arxivCategory}${interest}`;
     let hashMessages: HashMessagesType | null = null;
     hashMessages = await kv.hget(hash, 'messages');
     // hashMessages = null // to check summaries without saving them in database
